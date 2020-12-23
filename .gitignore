@@ -8,3 +8,4 @@ YAS.*
 2054_왜틀린지모르겠단말이지.cpp
 an.cpp
 *.vcxproj
+.gitignore
