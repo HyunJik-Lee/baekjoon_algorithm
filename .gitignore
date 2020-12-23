@@ -1,0 +1,7 @@
+Debug/
+x64/
+.swp
+input.txt
+tips.txt
+YAS.*
+소스.cpp
