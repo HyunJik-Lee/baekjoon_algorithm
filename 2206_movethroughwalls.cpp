@@ -3,18 +3,11 @@
 using namespace std;
 typedef long long ll;
 typedef pair<int, int> pii;
-
-int input[102][102];
-int visited[102][102][2];
-int dx[4] = { -1, 1, 0, 0 }; //상하좌우
-int dy[4] = { 0, 0, -1, 1 };
-queue<pii> bfs;
-
+char board[1001][1001];
+int dist[1001][1001][2];
+int dx[4] = { 1,-1,0,0 };
+int dy[4] = { 0,0,-1,1 };
 int N, M;
-bool isBound(int x, int y) {
-	return (x >= 0) && (y >= 0) && (x < N) && (y < M);
-}
-
 int main() {
 	cin.tie(0);
 	cout.tie(0);
@@ -22,37 +15,32 @@ int main() {
 #ifdef LOCAL
 	freopen("input.txt", "r", stdin);
 #endif
-	string in;
 	cin >> N >> M;
 	for (int i = 0; i < N; i++) {
-		cin >> in;
-		for (int j = 0; j < in.size(); j++) {
-			input[i][j] = in[j] - '0';
-		}
+		cin >> board[i];
 	}
-	memset(visited, -1, sizeof(visited));
-	visited[0][0][0] = 1;
-	bfs.push({ 0, 0 });
-	while (!bfs.empty()) {
-		pii p = bfs.front(); bfs.pop();
+	fill(dist[0][0], dist[1000][1001], -1);
+	queue<pair<pii, int>> q;
+	dist[0][0][0] = 1;
+	q.push({ {0,0},0 });
+
+	while (!q.empty()) {
+		pair<pii, int> cur = q.front(); q.pop();
 		for (int i = 0; i < 4; i++) {
-			int nx = p.first + dx[i], ny = p.second + dy[i];
-			if (isBound(nx, ny) && visited[nx][ny] == -1) {
-				if (input[nx][ny] == 1 && cnt == 0) {
-					visited[nx][ny] = visited[p.first][p.second] + 10000;
-					bfs.push({ nx, ny });
-					cnt++;
-				}
-				else if (input[nx][ny] == 0) {
-					visited[nx][ny] = visited[p.first][p.second] + 1;
-					bfs.push({ nx, ny });
-				}
-				//visited[nx][ny] = visited[p.first][p.second] + 1;
-				//bfs.push({ nx, ny });
-			}
+			int nx = cur.first.first + dx[i];
+			int ny = cur.first.second + dy[i];
+			int cnt = cur.second;
+			if (nx < 0 || ny < 0 || nx >= N || ny >= M) continue;
+			if (board[nx][ny] == '1') cnt++;
+			if (cnt == 2) continue;
+			if (dist[nx][ny][cur.second] != -1 && dist[nx][ny][cnt] != -1) continue;
+			dist[nx][ny][cnt] = dist[cur.first.first][cur.first.second][cur.second] + 1;
+			q.push({ {nx,ny}, cnt });
 		}
 	}
+	if (dist[N - 1][M - 1][0] != -1 && dist[N - 1][M - 1][1] != -1)
+		cout << min(dist[N - 1][M - 1][0], dist[N - 1][M - 1][1]);
+	else
+		cout << max(dist[N - 1][M - 1][0], dist[N - 1][M - 1][1]);
 
-
-	cout << visited[N - 1][M - 1];
 }
